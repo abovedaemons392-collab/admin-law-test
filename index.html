@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Интерактивный тест по обществознанию для 10 класса на тему «Административное право».">
+<title>Тест: Административное право (10 класс)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1e3c72;
+    --blue: #4a90e2;
+    --light: #f7faff;
+    --border: #dbe7f5;
+    --orange: #f39c12;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --text: #2c3e50;
+    --muted: #7a8699;
+  }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text);
+  }
+
+  .quiz-container {
+    background: #fff;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .quiz-header {
+    background: var(--light);
+    padding: 25px 30px 20px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .quiz-header h1 {
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 15px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .quiz-body {
+    padding: 30px;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .option {
+    background: var(--light);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--blue);
+    background: #fff;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+  }
+
+  .option.correct {
+    background: #e8f8ef;
+    border-color: var(--green);
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .option.incorrect {
+    background: #fdeae8;
+    border-color: var(--red);
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .option.disabled {
+    cursor: default;
+  }
+
+  .explanation {
+    display: none;
+    background: #fffdf5;
+    border-left: 4px solid var(--orange);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    align-self: flex-end;
+    display: none;
+    margin-top: auto;
+  }
+
+  .btn:hover { background: var(--navy); }
+  .btn:active { transform: scale(0.97); }
+  .btn.show { display: inline-block; }
+
+  .result-screen {
+    display: none;
+    padding: 40px 30px;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 350px;
+  }
+
+  .result-screen.show { display: flex; }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--light);
+    border: 6px solid var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+
+  .result-screen h2 {
+    font-size: 24px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  .result-screen p {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 25px;
+  }
+
+  .btn-restart {
+    background: var(--orange);
+    display: inline-block;
+  }
+
+  .btn-restart:hover { background: #c87f0a; }
+
+  /* Стили для футера сайта */
+  .site-footer {
+    margin-top: 30px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .site-footer a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .quiz-body, .result-screen { padding: 20px; }
+    .question-text { font-size: 16px; }
+    .option { padding: 12px 15px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div class="quiz-header">
+    <h1>Тест: Административное право</h1>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+  </div>
+
+  <div class="quiz-body" id="quizBody">
+    <div class="question-number" id="qNumber">Вопрос 1 из 10</div>
+    <div class="question-text" id="qText">Текст вопроса</div>
+    
+    <div class="options" id="optionsContainer">
+      <!-- Сюда будут добавляться варианты -->
+    </div>
+
+    <div class="explanation" id="explanation">
+      <!-- Пояснение -->
+    </div>
+
+    <button class="btn" id="nextBtn">Следующий вопрос →</button>
+  </div>
+
+  <div class="result-screen" id="resultScreen">
+    <div class="score-circle" id="scoreDisplay">0/10</div>
+    <h2 id="resultTitle">Отличная работа!</h2>
+    <p id="resultText">Вы отлично усвоили тему «Административное право».</p>
+    <button class="btn btn-restart show" id="restartBtn">Пройти заново ↻</button>
+  </div>
+</div>
+
+<div class="site-footer">
+  <p>© 2026 · Интерактивный тест по обществознанию для 10 класса</p>
+  <p>Тема: Административное право · § 24</p>
+</div>
+
+<script>
+  // Данные теста
+  const questions = [
+    {
+      question: "Какой кодекс является основным источником административного права в Российской Федерации?",
+      options: [
+        "Уголовный кодекс РФ (УК РФ)",
+        "Кодекс об административных правонарушениях (КоАП РФ)",
+        "Гражданский кодекс РФ (ГК РФ)",
+        "Трудовой кодекс РФ (ТК РФ)"
+      ],
+      correct: 1,
+      explanation: "Основным источником административного права является Кодекс Российской Федерации об административных правонарушениях (КоАП РФ)."
+    },
+    {
+      question: "Какая главная особенность отличает административные правоотношения от гражданских?",
+      options: [
+        "Стороны всегда равны друг другу",
+        "Отношения возникают только между физическими лицами",
+        "Одна сторона наделена властными полномочиями по отношению к другой",
+        "Отношения всегда связаны с куплей-продажей товаров"
+      ],
+      correct: 2,
+      explanation: "В административных правоотношениях одна сторона (орган власти или должностное лицо) наделена государственно-властными полномочиями, а вторая обязана подчиняться."
+    },
+    {
+      question: "С какого возраста по общему правилу наступает административная ответственность?",
+      options: [
+        "С 14 лет",
+        "С 16 лет",
+        "С 18 лет",
+        "С 21 года"
+      ],
+      correct: 1,
+      explanation: "По общему правилу административная ответственность наступает с 16 лет. По некоторым статьям (например, мелкое хулиганство) — с 14 лет."
+    },
+    {
+      question: "Какое административное наказание НЕ применяется к несовершеннолетним?",
+      options: [
+        "Предупреждение",
+        "Административный штраф",
+        "Административный арест",
+        "Обязательные работы"
+      ],
+      correct: 2,
+      explanation: "Административный арест к несовершеннолетним не применяется. Основные наказания для них — предупреждение и штраф."
+    },
+    {
+      question: "Что из перечисленного является административным правонарушением?",
+      options: [
+        "Кража денег из банкомата",
+        "Разбойное нападение на магазин",
+        "Переход дороги в неположенном месте",
+        "Убийство в состоянии аффекта"
+      ],
+      correct: 2,
+      explanation: "Переход дороги в неположенном месте — это административный проступок. Кража, разбой и убийство — уголовные преступления."
+    },
+    {
+      question: "Чем административный проступок отличается от уголовного преступления?",
+      options: [
+        "Наличием вины",
+        "Меньшей степенью общественной опасности",
+        "Тем, что его совершают только несовершеннолетние",
+        "Отсутствием наказания"
+      ],
+      correct: 1,
+      explanation: "Административное правонарушение отличается от преступления меньшей степенью общественной опасности. За него наступает административная, а не уголовная ответственность, и оно не влечет судимости."
+    },
+    {
+      question: "Как называется денежное взыскание, применяемое за административное правонарушение?",
+      options: [
+        "Пошлина",
+        "Налог",
+        "Штраф",
+        "Неустойка"
+      ],
+      correct: 2,
+      explanation: "Административный штраф — это денежное взыскание, которое выражается в рублях и устанавливается законом."
+    },
+    {
+      question: "Кто имеет право назначать такое административное наказание, как административный арест?",
+      options: [
+        "Любой сотрудник полиции",
+        "Инспектор ГИБДД",
+        "Судья",
+        "Директор школы"
+      ],
+      correct: 2,
+      explanation: "Административный арест (до 15 суток) назначается только судьей."
+    },
+    {
+      question: "15-летний подросток без уважительной причины разрисовал стену в подъезде (мелкое хулиганство). Кто понесет ответственность?",
+      options: [
+        "Сам подросток (заплатит штраф из своих карманных денег)",
+        "Его родители или законные представители",
+        "Управляющая компания",
+        "Никто, так как ему еще нет 16 лет"
+      ],
+      correct: 1,
+      explanation: "Так как подростку нет 16 лет и у него нет самостоятельного заработка, административный штраф взыскивается с его родителей (опекунов)."
+    },
+    {
+      question: "Что произойдет, если гражданин не согласен с выписанным ему административным штрафом?",
+      options: [
+        "Он может не платить его без последствий",
+        "Он может оспорить решение в суде или вышестоящем органе",
+        "Он должен немедленно оплатить штраф в двойном размере",
+        "Он может подать жалобу только Президенту РФ"
+      ],
+      correct: 1,
+      explanation: "Одной из особенностей административных правоотношений является возможность обжалования: решения органов власти можно оспорить в вышестоящем органе или в суде."
+    }
+  ];
+
+  // Состояние
+  let currentQuestion = 0;
+  let score = 0;
+  let answered = false;
+
+  // DOM элементы
+  const qNumber = document.getElementById('qNumber');
+  const qText = document.getElementById('qText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const explanation = document.getElementById('explanation');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progress');
+  const quizBody = document.getElementById('quizBody');
+  const resultScreen = document.getElementById('resultScreen');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultText = document.getElementById('resultText');
+  const restartBtn = document.getElementById('restartBtn');
+
+  // Функции
+  function loadQuestion() {
+    answered = false;
+    explanation.style.display = 'none';
+    nextBtn.classList.remove('show');
+    
+    const q = questions[currentQuestion];
+    qNumber.textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+    qText.textContent = q.question;
+    optionsContainer.innerHTML = '';
+
+    q.options.forEach((opt, index) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.textContent = opt;
+      div.onclick = () => selectOption(index, div);
+      optionsContainer.appendChild(div);
+    });
+
+    // Обновление прогресс-бара
+    progress.style.width = `${(currentQuestion / questions.length) * 100}%`;
+  }
+
+  function selectOption(index, element) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentQuestion];
+    const allOptions = optionsContainer.querySelectorAll('.option');
+
+    // Блокируем все варианты
+    allOptions.forEach(opt => opt.classList.add('disabled'));
+
+    // Подсветка
+    if (index === q.correct) {
+      element.classList.add('correct');
+      score++;
+    } else {
+      element.classList.add('incorrect');
+      allOptions[q.correct].classList.add('correct'); // показываем правильный
+    }
+
+    // Показ пояснения
+    explanation.textContent = q.explanation;
+    explanation.style.display = 'block';
+
+    // Кнопка далее
+    nextBtn.classList.add('show');
+    if (currentQuestion === questions.length - 1) {
+      nextBtn.textContent = 'Показать результат 🏁';
+    } else {
+      nextBtn.textContent = 'Следующий вопрос →';
+    }
+  }
+
+  nextBtn.onclick = () => {
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  };
+
+  function showResults() {
+    quizBody.style.display = 'none';
+    resultScreen.classList.add('show');
+    progress.style.width = '100%';
+    
+    scoreDisplay.textContent = `${score}/${questions.length}`;
+    
+    if (score === questions.length) {
+      resultTitle.textContent = "Идеально! 🏆";
+      resultText.textContent = "Вы отлично усвоили тему «Административное право».";
+      scoreDisplay.style.borderColor = "var(--green)";
+      scoreDisplay.style.color = "var(--green)";
+    } else if (score >= 7) {
+      resultTitle.textContent = "Хороший результат! 👍";
+      resultText.textContent = "Вы неплохо разбираетесь в теме, но стоит повторить некоторые моменты.";
+      scoreDisplay.style.borderColor = "var(--blue)";
+      scoreDisplay.style.color = "var(--navy)";
+    } else {
+      resultTitle.textContent = "Нужно повторить материал 📚";
+      resultText.textContent = "Вернитесь к параграфу 24 и попробуйте пройти тест еще раз.";
+      scoreDisplay.style.borderColor = "var(--red)";
+      scoreDisplay.style.color = "var(--red)";
+    }
+  }
+
+  restartBtn.onclick = () => {
+    currentQuestion = 0;
+    score = 0;
+    resultScreen.classList.remove('show');
+    quizBody.style.display = 'flex';
+    loadQuestion();
+  };
+
+  // Старт
+  loadQuestion();
+</script>
+
+</body>
+</html>
